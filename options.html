@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Nap Tabs — настройки</title>
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body class="options dark">
+  <div class="aurora" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
+            <rect x="3.5" y="3.5" width="25" height="25" rx="7.5" stroke="url(#navGrad)" stroke-width="1.4"></rect>
+            <path d="M22 17.4A7.2 7.2 0 0 1 13.6 9 7.6 7.6 0 1 0 22 17.4Z" fill="url(#navGrad)"></path>
+            <path d="M9 24h14" stroke="url(#navGrad)" stroke-width="1.6" stroke-linecap="round"></path>
+            <defs><linearGradient id="navGrad" x1="0" y1="0" x2="32" y2="32"><stop offset="0%" stop-color="#2ff2b3"></stop><stop offset="55%" stop-color="#4d7cff"></stop><stop offset="100%" stop-color="#a06bff"></stop></linearGradient></defs>
+          </svg>
+        </span>
+        <span class="brand-text"><strong>Memory Nap</strong><small id="modeChip">Chrome</small></span>
+      </div>
+      <nav class="nav-links" id="navLinks" aria-label="Разделы настроек">
+        <a href="#behavior">Поведение</a>
+        <a href="#protect">Защита</a>
+        <a href="#whitelist">Белый список</a>
+        <a href="#sessions">Сессии</a>
+        <a href="#stats">Статистика</a>
+        <a href="#interface">Интерфейс</a>
+        <a href="#data">Данные</a>
+      </nav>
+      <div class="nav-tools">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Переключить тему"></button>
+        <button class="btn small primary" id="exportTop" type="button">Экспорт</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero-band">
+      <div class="hero-text">
+        <p class="eyebrow">Центр управления памятью</p>
+        <h1>Вкладки спят — память работает на вас</h1>
+        <p class="hero-lead">Мягкое автоусыпление на <code>chrome.alarms</code>, защита форм и плееров, реальные показания системной RAM и сессии с сохранением структуры окон.</p>
+        <div class="chip-row" id="heroChips"></div>
+      </div>
+      <div class="hero-metrics">
+        <article class="card metric"><span>Освобождено сейчас</span><strong id="metricNow">0 МБ</strong><small id="metricSleep">0 спят</small></article>
+        <article class="card metric"><span>Всего за всё время</span><strong id="metricTotal">0 МБ</strong><small id="metricCycles">0 усыплений</small></article>
+        <article class="card metric ram">
+          <span>Системная RAM</span>
+          <strong id="metricRam">—</strong>
+          <div class="meter-track"><div class="meter-fill" id="ramFill" style="width:0%"></div></div>
+        </article>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="rail">
+        <section class="card rail-card">
+          <p class="eyebrow">Профиль нагрузки</p>
+          <div class="profile-cards" id="profileCards"></div>
+          <p class="rail-hint" id="profileSummary"></p>
+          <button class="btn ghost small" id="runCycle" type="button">Проверить вкладки сейчас</button>
+        </section>
+        <section class="card rail-card">
+          <p class="eyebrow">Горячие клавиши</p>
+          <ul class="keys">
+            <li><span>Усыпить текущую</span><kbd>Alt</kbd><kbd>Shift</kbd><kbd>S</kbd></li>
+            <li><span>Усыпить неактивные</span><kbd>Alt</kbd><kbd>Shift</kbd><kbd>A</kbd></li>
+            <li><span>Разбудить все</span><kbd>Alt</kbd><kbd>Shift</kbd><kbd>W</kbd></li>
+          </ul>
+          <button class="btn ghost small" id="copyShortcuts" type="button">Скопировать адрес настройки</button>
+        </section>
+      </aside>
+
+      <div class="content">
+        <section class="card block" id="behavior">
+          <div class="section-head"><h2>Поведение автоусыпления</h2><span class="hint" id="behaviorHint"></span></div>
+          <div class="field">
+            <label class="field-label" for="minutesRange">Таймер простоя</label>
+            <div class="field-row"><div class="range-wrap" id="minutesRange"></div><div id="minutesStepper"></div></div>
+            <p class="field-hint">0 — автоусыпление выключено. Значение применяется мгновенно, будильник пересоздаётся только при реальном изменении.</p>
+          </div>
+          <div class="field">
+            <span class="field-label">Таймеры профилей</span>
+            <div class="profile-minutes" id="profileMinutes"></div>
+          </div>
+          <div class="field">
+            <span class="field-label">Максимум вкладок за один цикл</span>
+            <div class="field-row"><div id="maxPerCycle"></div><p class="field-hint">Ограничивает нагрузку: страницы проверяются параллельно по три.</p></div>
+          </div>
+          <div class="field toggle-field" id="ramGuardToggle"></div>
+          <div class="field" id="ramGuardField">
+            <label class="field-label">Усыплять, только если свободно меньше</label>
+            <div class="field-row"><div class="range-wrap" id="ramGuardRange"></div><strong class="range-value" id="ramGuardValue">25%</strong></div>
+            <p class="field-hint">Использует реальные данные <code>chrome.system.memory</code>: пока памяти хватает, вкладки не трогаем.</p>
+          </div>
+        </section>
+
+        <section class="card block" id="protect">
+          <div class="section-head"><h2>Что защищаем от сна</h2><span class="hint">Проверка выполняется прямо перед усыплением, во всех фреймах</span></div>
+          <div class="toggles" id="protectToggles"></div>
+          <div class="field" id="readingField">
+            <label class="field-label">Порог лонгрида в профиле «Чтение»</label>
+            <div class="field-row"><div class="range-wrap" id="readingRange"></div><strong class="range-value" id="readingValue">7000</strong></div>
+            <p class="field-hint">Символов текста в статье, после которого вкладка считается лонгридом и не засыпает.</p>
+          </div>
+        </section>
+
+        <section class="card block" id="whitelist">
+          <div class="section-head"><h2>Белый список доменов</h2><span class="hint" id="whitelistHint">0 доменов</span></div>
+          <p class="field-hint">Поддомены учитываются автоматически: <code>google.com</code> защитит и <code>docs.google.com</code>. Можно вставить список через запятую или с новой строки.</p>
+          <div class="whitelist-input">
+            <input type="text" id="whitelistInput" placeholder="например, habr.com" aria-label="Новый домен" />
+            <button class="btn primary" id="whitelistAdd" type="button">Добавить</button>
+          </div>
+          <div class="whitelist-chips" id="whitelistChips"></div>
+        </section>
+
+        <section class="card block" id="sessions">
+          <div class="section-head"><h2>Сохранённые сессии</h2><button class="btn small" id="saveSession" type="button">Сохранить текущую</button></div>
+          <p class="field-hint">Сессия хранит порядок, закреплённые вкладки и разделение по окнам. Восстановление открывает их в новых окнах.</p>
+          <div class="session-list" id="sessionList"></div>
+        </section>
+
+        <section class="card block" id="stats">
+          <div class="section-head">
+            <h2>Экономия памяти</h2>
+            <div class="chip-row" id="statsRange"></div>
+          </div>
+          <svg class="chart big" id="statsChart" viewBox="0 0 640 200" role="img" aria-label="График освобождённой памяти"></svg>
+          <div class="stat-grid" id="statGrid"></div>
+          <p class="field-hint">Оценка строится по типу страницы: обычные вкладки ≈ 65 МБ, тяжёлые редакторы и видеосервисы ≈ 230–320 МБ. Это модель, а не точный замер Chrome.</p>
+        </section>
+
+        <section class="card block" id="interface">
+          <div class="section-head"><h2>Интерфейс</h2><span class="hint">Настройки синхронизируются между устройствами</span></div>
+          <div class="grid-2">
+            <div class="field"><label class="field-label" for="themeSelect">Тема</label><select id="themeSelect"><option value="dark">Тёмная</option><option value="light">Светлая</option><option value="system">Как в системе</option></select></div>
+            <div class="field"><label class="field-label" for="densitySelect">Плотность</label><select id="densitySelect"><option value="cozy">Свободная</option><option value="compact">Компактная</option></select></div>
+          </div>
+          <div class="toggles" id="uiToggles"></div>
+        </section>
+
+        <section class="card block" id="data">
+          <div class="section-head"><h2>Данные и сброс</h2><span class="hint">Резервная копия настроек и статистики</span></div>
+          <div class="data-actions">
+            <button class="btn" id="exportBtn" type="button">Скачать JSON</button>
+            <button class="btn" id="importBtn" type="button">Загрузить JSON</button>
+            <button class="btn ghost" id="resetStats" type="button">Очистить статистику</button>
+            <button class="btn danger" id="resetSettings" type="button">Сбросить настройки</button>
+          </div>
+          <input type="file" id="importFile" accept="application/json" hidden />
+          <p class="field-hint" id="dataHint"></p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-layer" id="toastLayer"></div>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

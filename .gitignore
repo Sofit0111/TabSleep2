@@ -1,0 +1,17 @@
+# мусор ОС
+.DS_Store
+Thumbs.db
+*.swp
+
+# редакторы
+.vscode/
+.idea/
+
+# если когда-нибудь появятся сборка/зависимости
+node_modules/
+dist/
+*.zip
+
+# локальные заметки и бэкапы
+*.log
+memory-nap-backup-*.json
